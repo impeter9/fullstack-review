@@ -8,9 +8,28 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      repos: []
+      repos: [],
+      button: true,
     }
+  }
 
+  componentDidMount() {
+    $.ajax({
+      method: "GET",
+      url: "/repos",
+      success: function(res) {
+        console.log('success get')
+      },
+      error: function(error) {
+        console.log(error)
+      }
+    }).then((res) => {
+      var newRes = res.slice();
+      // newRes.sort((a, b) => (a.forks < b.forks) ? 1: -1);
+      this.setState({
+        repos: newRes
+      })
+    })
   }
 
   search (term) {
@@ -18,11 +37,21 @@ class App extends React.Component {
     $.ajax({
       method: "POST",
       url: "/repos",
-      data: { username: term}
+      data: { username: term },
+      success: function(res) {
+        console.log('success post')
+      },
+      error: function(error) {
+        console.log(error)
+      }
+    }).then((res)=> {
+      console.log('haha')
+      let button = this.state.button;
+      this.setState({
+        button: !button
+      })
     })
-      .done(function( msg ) {
-        alert( "Data Saved: " + msg );
-      });
+
   }
 
   render () {
